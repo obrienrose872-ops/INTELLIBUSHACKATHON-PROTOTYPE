@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADHD Experience</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ---------- Global Styles ---------- */
+        body,
+        html {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        #background {
+            position: fixed;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: linear-gradient(45deg, #667eea, #764ba2, #43e97b, #38f9d7);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+        }
+
+        button {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 25px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 5px 0;
+            width: 100%;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #764ba2, #667eea);
+            transform: translateY(-2px);
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+        }
+
+        canvas {
+            border: 2px solid #667eea;
+            display: block;
+            margin: 10px auto;
+            background: #fff;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 120px);
+            gap: 10px;
+            justify-content: center;
+            margin: auto;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: confetti 2s linear forwards;
+        }
+
+        @keyframes confetti {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(300px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* ---------- Modern Login Card ---------- */
+        .modern-login {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-card {
+            background: #ffffffdd;
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .login-card h1 {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 2.2em;
+        }
+
+        .login-card .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1em;
+        }
+
+        @media(max-width: 500px) {
+            .login-card {
+                padding: 40px 20px;
+            }
+
+            .login-card h1 {
+                font-size: 2em;
+            }
+        }
+
+        progress {
+            width: 80%;
+            height: 25px;
+            border-radius: 10px;
+        }
+    </style>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+</head>
+
+<body>
+    <div id="background"></div>
+
+    <!-- ---------- Login ---------- -->
+    <div id="loginSection" class="modern-login">
+        <div class="login-card">
+            <h1>ADHD Experience</h1>
+            <p class="subtitle">Interactive Learning & Focus Tools</p>
+            <input type="text" id="name" placeholder="Enter your name">
+            <select id="role">
+                <option value="">Select Role</option>
+                <option value="student">Student</option>
+                <option value="advisor">Advisor/Teacher/Coach</option>
+            </select>
+            <button onclick="login()">Continue</button>
+        </div>
+    </div>
+    <p class="subtitle">Interactive Learning & Focus Tools</p>
+
+    <!-- ---------- Advisor ---------- -->
+    <div id="advisorSection" class="container hidden">
+        <h1>🧩 Advisor Dashboard</h1>
+        <p id="advisorWelcome"></p>
+        <input type="url" id="testLink" placeholder="Paste test link">
+        <button onclick="saveTestLink()">Save Test</button>
+        <p id="saveMsg"></p>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <!-- ---------- Student ---------- -->
+    <div id="studentSection" class="container hidden">
+        <h1>🎯 Student Dashboard</h1>
+        <p id="studentWelcome"></p>
+        <h3>Your Test</h3>
+        <iframe id="testFrame" src="" width="100%" height="400"></iframe>
+        <button onclick="finishTest()">Finish Test & Unlock Games</button>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <!-- ---------- Games ---------- -->
+    <div id="game1Section" class="container hidden">
+        <h1>🦘 Jump Game</h1>
+        <p>Press SPACE to jump as many times as possible in 60 seconds!</p>
+        <p id="timer1">60</p>
+        <p id="score1">Score: 0</p>
+    </div>
+
+    <div id="game2Section" class="container hidden">
+        <h1>🏃 Running Game</h1>
+        <p>Press → repeatedly to reach 100%!</p>
+        <progress id="runProgress" value="0" max="100"></progress>
+        <p id="progressText">0%</p>
+    </div>
+
+    <div id="game3Section" class="container hidden">
+        <h1>⚖️ Balance Game</h1>
+        <canvas id="balanceCanvas" width="500" height="300"></canvas>
+    </div>
+
+    <div id="game4Section" class="container hidden">
+        <h1>🎈 Balloon Pop</h1>
+        <p>Click balloons before they float away!</p>
+        <canvas id="balloonCanvas" width="500" height="400"></canvas>
+        <p id="balloonScore">Score: 0</p>
+    </div>
+
+    <div id="game5Section" class="container hidden">
+        <h1>🔨 Whack-a-Mole</h1>
+        <p>Click moles as fast as you can!</p>
+        <div id="moleGrid" class="grid"></div>
+        <p id="moleScore">Score: 0</p>
+    </div>
+
+    <!-- ---------- Reward & Calm ---------- -->
+    <div id="rewardSection" class="container hidden">
+        <h1>🎉 You Did It!</h1>
+        <p>You’ve completed all games!</p>
+        <button onclick="goToCalm()">🧘 Go to Calm Corner</button>
+        <button onclick="playAgain()">🔁 Play Again</button>
+    </div>
+
+    <div id="calmSection" class="container hidden">
+        <h1>🧘 Calm Corner</h1>
+        <h3>🌬️ Breathing Exercise</h3>
+        <canvas id="breathingCanvas" width="300" height="300"></canvas><br>
+        <button onclick="startBreathing()">Start</button>
+        <h3>🎨 Doodle Pad</h3>
+        <canvas id="doodlePad" width="600" height="300"></canvas><br>
+        <button onclick="clearDoodle()">Clear</button>
+        <h3>🎧 Ambient Music</h3>
+        <audio controls>
+            <source
+                src="https://cdn.pixabay.com/download/audio/2023/03/09/audio_8a1dc21e02.mp3?filename=calm-piano-14461.mp3"
+                type="audio/mpeg">
+        </audio>
+    </div>
+
+    <!-- ---------- Scripts ---------- -->
+    <script>
+        let user = null;
+
+        // ---------- Section Helpers ----------
+        function hideAll() {
+            const sections = ["loginSection", "advisorSection", "studentSection", "game1Section", "game2Section", "game3Section", "game4Section", "game5Section", "rewardSection", "calmSection"];
+            sections.forEach(id => document.getElementById(id).classList.add("hidden"));
+        }
+        function show(id) { document.getElementById(id).classList.remove("hidden"); }
+        function hide(id) { document.getElementById(id).classList.add("hidden"); }
+
+        // ---------- Login ----------
+        function login() {
+            const nameInput = document.getElementById("name").value.trim();
+            const roleInput = document.getElementById("role").value;
+            if (!nameInput || !roleInput) { alert("Enter name and role"); return; }
+            user = { name: nameInput, role: roleInput, uid: Date.now() };
+            localStorage.setItem("user", JSON.stringify(user));
+
+            hideAll();
+            if (roleInput === "student") {
+                document.getElementById("studentWelcome").textContent = "Welcome, " + nameInput + "!";
+                loadTest();
+                show("studentSection");
+            } else {
+                document.getElementById("advisorWelcome").textContent = "Welcome, " + nameInput + "!";
+                show("advisorSection");
+            }
+        }
+        function logout() { user = null; localStorage.removeItem("user"); hideAll(); show("loginSection"); }
+
+        // ---------- Firebase ----------
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // ---------- Advisor Test ----------
+        function saveTestLink() {
+            const link = document.getElementById("testLink").value;
+            if (link) { db.ref('tests').push({ link, advisor: user.name }); document.getElementById("saveMsg").textContent = "✅ Test saved!"; confetti(); }
+        }
+        function loadTest() {
+            db.ref('tests').limitToLast(1).once('value', snapshot => {
+                const data = snapshot.val();
+                if (data) { document.getElementById("testFrame").src = Object.values(data)[0].link; }
+            });
+        }
+
+        // ---------- Confetti ----------
+        function confetti() { for (let i = 0; i < 30; i++) { const c = document.createElement("div"); c.className = "confetti"; c.style.background = `hsl(${Math.random() * 360},100%,50%)`; c.style.left = Math.random() * 100 + "vw"; document.body.appendChild(c); setTimeout(() => c.remove(), 2000); } }
+
+        // ---------- Games Logic ----------
+        let adhdProgress = JSON.parse(localStorage.getItem("adhdProgress")) || {}, score1 = 0, time1 = 60, run = 0, bScore = 0, mScore = 0, balloons = [];
+
+        // Continue the game scripts here (jump, run, balance, balloon, mole, reward, calm corner)...
+    </script>
+</body>
+
+</html>
